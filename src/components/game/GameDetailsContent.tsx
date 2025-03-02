@@ -1,6 +1,5 @@
 
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GameInfoTab from "./GameInfoTab";
@@ -28,8 +27,8 @@ const GameDetailsContent = ({ game }: GameDetailsContentProps) => {
         className="flex-1"
       >
         <div className="mb-4">
-          {game.id === "verb-forms-game" && (
-            <Link to="/games/verb-forms-game">
+          {(game.id === "verb-forms-game" || game.id === "vocabulary-quiz-game") && (
+            <Link to={`/games/${game.id}`}>
               <Button 
                 className={cn(
                   "w-full",
