@@ -8,6 +8,9 @@ import HowToPlayTab from "./HowToPlayTab";
 import BenefitsTab from "./BenefitsTab";
 import { Game } from "@/data/games";
 import GameSummary from "./GameSummary";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Play } from "lucide-react";
 
 interface GameDetailsContentProps {
   game: Game;
@@ -24,6 +27,25 @@ const GameDetailsContent = ({ game }: GameDetailsContentProps) => {
         transition={{ duration: 0.4, delay: 0.2 }}
         className="flex-1"
       >
+        <div className="mb-4">
+          {game.id === "verb-forms-game" && (
+            <Link to="/games/verb-forms-game">
+              <Button 
+                className={cn(
+                  "w-full",
+                  game.category === "grammar" ? "bg-grammar hover:bg-grammar/90" :
+                  game.category === "vocabulary" ? "bg-vocabulary hover:bg-vocabulary/90" :
+                  "bg-pronunciation hover:bg-pronunciation/90",
+                  "text-white"
+                )}
+              >
+                <Play className="mr-2 h-4 w-4" />
+                Jugar ahora
+              </Button>
+            </Link>
+          )}
+        </div>
+
         <Tabs defaultValue="info" className="h-full flex flex-col">
           <TabsList className="justify-start mb-3">
             <TabsTrigger value="info">Información</TabsTrigger>
