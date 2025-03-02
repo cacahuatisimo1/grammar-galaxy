@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -23,9 +22,9 @@ import {
   Info,
   CheckCircle2
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Define game data (same as in Index.tsx)
 const games = [
   {
     id: "grammar-game",
@@ -145,15 +144,13 @@ const GameDetails = () => {
   const [selectedLevel, setSelectedLevel] = useState("Intermedio");
   const [isStarting, setIsStarting] = useState(false);
   
-  // Find the game with the matching ID
   const game = games.find(g => g.id === id);
   
-  // Handle case where game is not found
   if (!game) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 pt-28 pb-20 container max-w-6xl mx-auto px-4 md:px-6">
+        <main className="flex-1 pt-16 pb-8 container max-w-6xl mx-auto px-4 md:px-6">
           <div className="text-center py-20">
             <h1 className="text-3xl font-bold mb-4">Juego no encontrado</h1>
             <p className="text-muted-foreground mb-8">Lo sentimos, el juego que buscas no existe.</p>
@@ -170,15 +167,11 @@ const GameDetails = () => {
 
   const handleStartGame = () => {
     setIsStarting(true);
-    // In a real app, this would navigate to the actual game
     setTimeout(() => {
-      // For now, just simulate a game start
       setIsStarting(false);
-      // navigate(`/play/${id}?level=${selectedLevel}`);
     }, 2000);
   };
   
-  // Determine background color based on category
   const getBgColor = () => {
     if (game.category === "grammar") return "bg-gradient-to-b from-grammar/10 to-transparent";
     if (game.category === "vocabulary") return "bg-gradient-to-b from-vocabulary/10 to-transparent";
@@ -186,7 +179,6 @@ const GameDetails = () => {
     return "bg-gradient-to-b from-primary/10 to-transparent";
   };
   
-  // Determine button color based on category
   const getButtonClass = () => {
     if (game.category === "grammar") return "bg-grammar hover:bg-grammar/90";
     if (game.category === "vocabulary") return "bg-vocabulary hover:bg-vocabulary/90";
@@ -194,7 +186,6 @@ const GameDetails = () => {
     return "";
   };
 
-  // Get color for decorative elements
   const getCategoryColor = () => {
     if (game.category === "grammar") return "text-grammar";
     if (game.category === "vocabulary") return "text-vocabulary";
@@ -206,124 +197,73 @@ const GameDetails = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 pt-20">
-        {/* Hero section with game info */}
+      <main className="flex-1 flex flex-col">
         <section className={cn(
-          "pt-12 pb-20",
+          "flex-1 pt-16 pb-4",
           getBgColor()
         )}>
-          <div className="container max-w-6xl mx-auto px-4 md:px-6">
+          <div className="container max-w-6xl mx-auto px-4 md:px-6 h-full flex flex-col">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
+              className="mb-3"
             >
               <button 
                 onClick={() => navigate('/')}
-                className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors focus-ring rounded-md px-2 py-1"
+                className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors focus-ring rounded-md px-2 py-1"
               >
                 <ArrowLeft className="mr-1 h-4 w-4" />
                 Volver a los juegos
               </button>
             </motion.div>
             
-            <div className="md:flex items-start gap-8">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4 }}
-                className="shrink-0 mb-6 md:mb-0 flex justify-center md:block"
+                className="md:col-span-3 flex flex-col items-center md:items-start gap-4"
               >
                 <div className={cn(
-                  "w-32 h-32 rounded-3xl flex items-center justify-center shadow-card",
+                  "w-24 h-24 md:w-28 md:h-28 rounded-3xl flex items-center justify-center shadow-card mb-auto",
                   game.category === "grammar" ? "bg-grammar-light" : "",
                   game.category === "vocabulary" ? "bg-vocabulary-light" : "",
                   game.category === "pronunciation" ? "bg-pronunciation-light" : ""
                 )}>
-                  <div className="w-16 h-16">
+                  <div className="w-12 h-12 md:w-14 md:h-14">
                     {game.icon}
                   </div>
                 </div>
-              </motion.div>
-              
-              <div className="flex-1">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  <div className="flex items-center flex-wrap gap-3 mb-3">
-                    <CategoryChip category={game.category} />
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Trophy className="mr-1 h-4 w-4" />
-                      <span>3 niveles de dificultad</span>
+
+                <div className="w-full md:mt-auto space-y-3">
+                  <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-3 shadow-soft w-full">
+                    <h3 className="text-xs font-medium text-muted-foreground mb-2">
+                      Niveles
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      {game.levels.map((level) => (
+                        <button
+                          key={level}
+                          onClick={() => setSelectedLevel(level)}
+                          className={cn(
+                            "px-2 py-1 rounded-full text-xs font-medium transition-all",
+                            selectedLevel === level
+                              ? game.category === "grammar" ? "bg-grammar text-white" :
+                                game.category === "vocabulary" ? "bg-vocabulary text-white" :
+                                "bg-pronunciation text-white"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+                          )}
+                        >
+                          {level}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                  
-                  <h1 className="text-3xl md:text-4xl font-bold mb-3">
-                    {game.title}
-                  </h1>
-                  
-                  <p className="text-muted-foreground text-lg mb-6">
-                    {game.longDescription}
-                  </p>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                    <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-4 shadow-soft">
-                      <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                        Niveles disponibles
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {game.levels.map((level) => (
-                          <button
-                            key={level}
-                            onClick={() => setSelectedLevel(level)}
-                            className={cn(
-                              "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
-                              selectedLevel === level
-                                ? game.category === "grammar" ? "bg-grammar text-white" :
-                                  game.category === "vocabulary" ? "bg-vocabulary text-white" :
-                                  "bg-pronunciation text-white"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
-                            )}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-4 shadow-soft">
-                      <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                        Habilidades que mejorarás
-                      </h3>
-                      <div className="space-y-2">
-                        {game.skills.map((skill) => (
-                          <div key={skill} className="flex items-center gap-2">
-                            <CheckCircle2 className={cn("h-4 w-4", getCategoryColor())} />
-                            <span className="text-sm">{skill}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className="flex flex-col sm:flex-row gap-4"
-                >
+
                   <Button 
                     className={cn(
-                      "h-12 px-6 text-white",
+                      "w-full h-10 px-4 text-white",
                       getButtonClass(),
                       isStarting ? "opacity-80 pointer-events-none" : ""
                     )}
@@ -342,158 +282,180 @@ const GameDetails = () => {
                       </>
                     )}
                   </Button>
-                  
-                  <Button variant="outline" className="h-12">
-                    <Info className="mr-2 h-4 w-4" />
-                    Ver instrucciones
-                  </Button>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Game details section */}
-        <section className="py-16 border-t">
-          <div className="container max-w-6xl mx-auto px-4 md:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-              <div>
-                <h2 className="text-2xl font-bold mb-6">Cómo jugar</h2>
-                <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <div className="rounded-full w-8 h-8 bg-muted flex items-center justify-center shrink-0">
-                      <span className="font-semibold">1</span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Selecciona tu nivel</h3>
-                      <p className="text-muted-foreground text-sm">
-                        Elige entre principiante, intermedio o avanzado según tu nivel de inglés.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="rounded-full w-8 h-8 bg-muted flex items-center justify-center shrink-0">
-                      <span className="font-semibold">2</span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Lee las instrucciones</h3>
-                      <p className="text-muted-foreground text-sm">
-                        Familiarízate con las reglas específicas y objetivos del juego.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="rounded-full w-8 h-8 bg-muted flex items-center justify-center shrink-0">
-                      <span className="font-semibold">3</span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Completa los ejercicios</h3>
-                      <p className="text-muted-foreground text-sm">
-                        Responde a las preguntas o realiza las actividades dentro del tiempo establecido.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4">
-                    <div className="rounded-full w-8 h-8 bg-muted flex items-center justify-center shrink-0">
-                      <span className="font-semibold">4</span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Revisa tus resultados</h3>
-                      <p className="text-muted-foreground text-sm">
-                        Al finalizar, verás tu puntuación y consejos para mejorar.
-                      </p>
-                    </div>
-                  </div>
                 </div>
-              </div>
+              </motion.div>
               
-              <div>
-                <h2 className="text-2xl font-bold mb-6">Beneficios de este juego</h2>
-                <div className="space-y-4">
-                  <div className="bg-white rounded-xl p-4 border shadow-soft">
-                    <div className="flex items-start gap-3">
-                      <div className={cn(
-                        "rounded-full p-2 shrink-0",
-                        game.category === "grammar" ? "bg-grammar-light" : "",
-                        game.category === "vocabulary" ? "bg-vocabulary-light" : "",
-                        game.category === "pronunciation" ? "bg-pronunciation-light" : ""
-                      )}>
-                        <Brain className={cn("h-5 w-5", getCategoryColor())} />
-                      </div>
-                      <div>
-                        <h3 className="font-medium mb-1">Aprendizaje efectivo</h3>
-                        <p className="text-muted-foreground text-sm">
-                          Refuerza tus conocimientos mediante la práctica activa y repetición espaciada.
-                        </p>
-                      </div>
+              <div className="md:col-span-9">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  className="mb-4"
+                >
+                  <div className="flex items-center flex-wrap gap-2 mb-2">
+                    <CategoryChip category={game.category} />
+                    <div className="flex items-center text-xs text-muted-foreground">
+                      <Trophy className="mr-1 h-3 w-3" />
+                      <span>3 niveles de dificultad</span>
                     </div>
                   </div>
                   
-                  <div className="bg-white rounded-xl p-4 border shadow-soft">
-                    <div className="flex items-start gap-3">
-                      <div className={cn(
-                        "rounded-full p-2 shrink-0",
-                        game.category === "grammar" ? "bg-grammar-light" : "",
-                        game.category === "vocabulary" ? "bg-vocabulary-light" : "",
-                        game.category === "pronunciation" ? "bg-pronunciation-light" : ""
-                      )}>
-                        <Zap className={cn("h-5 w-5", getCategoryColor())} />
-                      </div>
-                      <div>
-                        <h3 className="font-medium mb-1">Motivación constante</h3>
-                        <p className="text-muted-foreground text-sm">
-                          Mantén el interés en el aprendizaje con dinámicas de juego entretenidas.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                    {game.title}
+                  </h1>
                   
-                  <div className="bg-white rounded-xl p-4 border shadow-soft">
-                    <div className="flex items-start gap-3">
-                      <div className={cn(
-                        "rounded-full p-2 shrink-0",
-                        game.category === "grammar" ? "bg-grammar-light" : "",
-                        game.category === "vocabulary" ? "bg-vocabulary-light" : "",
-                        game.category === "pronunciation" ? "bg-pronunciation-light" : ""
-                      )}>
-                        <Star className={cn("h-5 w-5", getCategoryColor())} />
-                      </div>
-                      <div>
-                        <h3 className="font-medium mb-1">Progreso medible</h3>
-                        <p className="text-muted-foreground text-sm">
-                          Visualiza tu avance y observa tu mejora con estadísticas detalladas.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  <p className="text-muted-foreground text-sm md:text-base line-clamp-2 mb-2">
+                    {game.longDescription}
+                  </p>
+                </motion.div>
                 
-                <div className="mt-8">
-                  <Button
-                    className={cn(
-                      "w-full h-12 text-white",
-                      getButtonClass(),
-                      isStarting ? "opacity-80 pointer-events-none" : ""
-                    )}
-                    onClick={handleStartGame}
-                    disabled={isStarting}
-                  >
-                    {isStarting ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-current" />
-                        Cargando...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="mr-2 h-4 w-4" />
-                        Comenzar {game.title}
-                      </>
-                    )}
-                  </Button>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="flex-1"
+                >
+                  <Tabs defaultValue="info" className="h-full flex flex-col">
+                    <TabsList className="justify-start mb-3">
+                      <TabsTrigger value="info">Información</TabsTrigger>
+                      <TabsTrigger value="how-to-play">Cómo jugar</TabsTrigger>
+                      <TabsTrigger value="benefits">Beneficios</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="info" className="flex-1">
+                      <div className="space-y-3">
+                        <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-3 shadow-soft">
+                          <p className="text-sm">{game.longDescription}</p>
+                        </div>
+                        
+                        <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-3 shadow-soft">
+                          <h3 className="text-xs font-medium text-muted-foreground mb-2">
+                            Habilidades que mejorarás
+                          </h3>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {game.skills.map((skill) => (
+                              <div key={skill} className="flex items-center gap-1.5">
+                                <CheckCircle2 className={cn("h-3 w-3", getCategoryColor())} />
+                                <span className="text-xs">{skill}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="how-to-play" className="flex-1 space-y-3">
+                      <div className="space-y-2.5">
+                        <div className="flex gap-2.5">
+                          <div className="rounded-full w-6 h-6 bg-muted flex items-center justify-center shrink-0">
+                            <span className="text-xs font-semibold">1</span>
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium mb-0.5">Selecciona tu nivel</h3>
+                            <p className="text-muted-foreground text-xs">
+                              Elige entre principiante, intermedio o avanzado.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-2.5">
+                          <div className="rounded-full w-6 h-6 bg-muted flex items-center justify-center shrink-0">
+                            <span className="text-xs font-semibold">2</span>
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium mb-0.5">Lee las instrucciones</h3>
+                            <p className="text-muted-foreground text-xs">
+                              Familiarízate con las reglas específicas del juego.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-2.5">
+                          <div className="rounded-full w-6 h-6 bg-muted flex items-center justify-center shrink-0">
+                            <span className="text-xs font-semibold">3</span>
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium mb-0.5">Completa los ejercicios</h3>
+                            <p className="text-muted-foreground text-xs">
+                              Responde a las preguntas dentro del tiempo establecido.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-2.5">
+                          <div className="rounded-full w-6 h-6 bg-muted flex items-center justify-center shrink-0">
+                            <span className="text-xs font-semibold">4</span>
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium mb-0.5">Revisa tus resultados</h3>
+                            <p className="text-muted-foreground text-xs">
+                              Al finalizar, verás tu puntuación y consejos para mejorar.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="benefits" className="flex-1 space-y-3">
+                      <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-3 shadow-soft">
+                        <div className="flex items-start gap-2.5">
+                          <div className={cn(
+                            "rounded-full p-1.5 shrink-0",
+                            game.category === "grammar" ? "bg-grammar-light" : "",
+                            game.category === "vocabulary" ? "bg-vocabulary-light" : "",
+                            game.category === "pronunciation" ? "bg-pronunciation-light" : ""
+                          )}>
+                            <Brain className={cn("h-4 w-4", getCategoryColor())} />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium mb-0.5">Aprendizaje efectivo</h3>
+                            <p className="text-muted-foreground text-xs">
+                              Refuerza tus conocimientos mediante la práctica activa.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-3 shadow-soft">
+                        <div className="flex items-start gap-2.5">
+                          <div className={cn(
+                            "rounded-full p-1.5 shrink-0",
+                            game.category === "grammar" ? "bg-grammar-light" : "",
+                            game.category === "vocabulary" ? "bg-vocabulary-light" : "",
+                            game.category === "pronunciation" ? "bg-pronunciation-light" : ""
+                          )}>
+                            <Zap className={cn("h-4 w-4", getCategoryColor())} />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium mb-0.5">Motivación constante</h3>
+                            <p className="text-muted-foreground text-xs">
+                              Mantén el interés con dinámicas de juego entretenidas.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white/80 backdrop-blur-xs rounded-xl border p-3 shadow-soft">
+                        <div className="flex items-start gap-2.5">
+                          <div className={cn(
+                            "rounded-full p-1.5 shrink-0",
+                            game.category === "grammar" ? "bg-grammar-light" : "",
+                            game.category === "vocabulary" ? "bg-vocabulary-light" : "",
+                            game.category === "pronunciation" ? "bg-pronunciation-light" : ""
+                          )}>
+                            <Star className={cn("h-4 w-4", getCategoryColor())} />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium mb-0.5">Progreso medible</h3>
+                            <p className="text-muted-foreground text-xs">
+                              Visualiza tu avance con estadísticas detalladas.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                </motion.div>
               </div>
             </div>
           </div>

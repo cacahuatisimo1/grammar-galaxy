@@ -1,10 +1,7 @@
-
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import CategoryChip from "./CategoryChip";
-
-type CategoryType = "grammar" | "vocabulary" | "pronunciation";
+import CategoryChip, { CategoryType } from "./CategoryChip";
 
 interface GameCardProps {
   id: string;

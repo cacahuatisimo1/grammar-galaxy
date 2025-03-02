@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -77,6 +76,22 @@ export default {
 				pronunciation: {
 					DEFAULT: '#FF6B4C',
 					light: '#FFE9E5'
+				},
+				listening: {
+					DEFAULT: '#3B82F6',
+					light: '#DBEAFE'
+				},
+				reading: {
+					DEFAULT: '#8B5CF6',
+					light: '#EDE9FE'
+				},
+				writing: {
+					DEFAULT: '#EC4899',
+					light: '#FCE7F3'
+				},
+				speaking: {
+					DEFAULT: '#F97316',
+					light: '#FFEDD5'
 				}
 			},
 			borderRadius: {
