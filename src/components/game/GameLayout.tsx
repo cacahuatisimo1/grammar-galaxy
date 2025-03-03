@@ -27,7 +27,7 @@ const GameLayout = ({ game, children }: GameLayoutProps) => {
             <div>
               <h1 className="text-2xl font-bold">{game.title}</h1>
               <p className="text-muted-foreground">
-                {game.shortDescription}
+                {game.description}
               </p>
             </div>
           </div>
